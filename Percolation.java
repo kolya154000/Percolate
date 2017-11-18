@@ -4,7 +4,8 @@
  * @author Mykola
  * @version (a version number or a date)
  */
-import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+//import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+import java.util.Random;
 
 public class Percolation
 {
@@ -12,7 +13,7 @@ public class Percolation
    private char[][] cond; 
    private int size;
    private int openNumber;
-   WeightedQuickUnionUF id;
+   private WeightedQuickUnionUF id;
    
    /**
     * Constructor for objects of class Percolation
@@ -42,7 +43,7 @@ public class Percolation
    
    private boolean validate(int row, int col) // check invalid indicies
    {
-      if(row < 0 || row > side || col < 0 || col > side) {
+      if(row < 1 || row > side || col < 1 || col > side) {
           throw new IllegalArgumentException("row " + row + " or col " + col + " is not between 1 and " + side);
           }  
       else
@@ -52,25 +53,29 @@ public class Percolation
    private void connectNeighbours(int row, int col) // connect open neighbours that are below, above, right or left
    {
        int p = xyTo1D(row, col);
-       if(isOpen(Math.max(1, row - 1), col))   //left neighbour
+       if(isOpen(row, Math.max(1, col - 1)))   //left neighbour
+       {
+           int q = xyTo1D(row, Math.max(1, col - 1));
+           id.union(p, q);
+           //System.out.println(p + " and " + q + " connected with left neighbour");
+        }
+       if(isOpen(Math.max(1, row - 1), col)) //above neighbour
        {
            int q = xyTo1D(Math.max(1, row - 1), col);
            id.union(p, q);
+          // System.out.println(p + " and " + q + " connected with above neighbour");
        }
-       if(isOpen(Math.max(1, col - 1), row)) //above neighbour
+       if(isOpen(row, Math.min(side, col + 1)))  // right neighbour
        {
-           int q = xyTo1D(Math.max(1, col - 1), row);
+           int q = xyTo1D(row, Math.min(side, col + 1));
            id.union(p, q);
+          // System.out.println(p + " and " + q + " connected with right neighbour");
        }
-       if(isOpen(Math.min(side, row + 1), col))  // right neighbour
+       if(isOpen(Math.min(side, row + 1), col))  // below neighbour
        {
            int q = xyTo1D(Math.min(side, row + 1), col);
            id.union(p, q);
-       }
-       if(isOpen(Math.min(side, col + 1), row))  // below neighbour
-       {
-           int q = xyTo1D(Math.min(side, col + 1), row);
-           id.union(p, q);
+           //System.out.println(p + " and " + q + " connected with below neighbour");
        }
    }
    public void open(int row, int col) // open site (row, col) if it is not open already
@@ -97,9 +102,13 @@ public class Percolation
        int p = xyTo1D(row, col);
        for(int i = 0; i < side; i++)
        {
-           if(id.connected(i, p))
-           return true;
+           if(id.connected(i, p) && isOpen(1, i + 1))
+           {
+               //System.out.println(row + " " + col + " is full");
+               return true;
+           }   
        }
+       //System.out.println(row + " " + col + "isn't full");
        return false;
    }
    public int numberOfOpenSites()  // number of open sites
@@ -119,6 +128,27 @@ public class Percolation
    
    public static void main(String[] args)
    {
+      int n = 200;         // n-by-n percolation system
+      float sum = 0;
+      int count = 0;
+       Random g = new Random(); 
+        // repeatedly read in sites to open and draw resulting system
+      Percolation perc;
+      for(int i = 0; i < 100; i++)
+      {
+       perc = new Percolation(n);
+      while (!perc.percolates())
+      {
+          
+           int r = g.nextInt(n) + 1;
+           int j = g.nextInt(n) + 1;
+           perc.open(r, j);
+      }
+      System.out.println((float)perc.numberOfOpenSites() / (n * n));
+      sum+= (float)perc.numberOfOpenSites() / (n * n);
+      count++;
+    }
+    System.out.println("mean = " + (float)sum / count);
        
    } // test client (optional)
 
