@@ -22,7 +22,7 @@ public class PercolationStats {
        this.t = trials;
        perc = new Percolation(n);
        fractions = new double[t];
-       // StdDraw.enableDoubleBuffering();
+       //StdDraw.enableDoubleBuffering();
        for(int i = 0; i < t; i++)
        {
            while (!perc.percolates())
@@ -31,10 +31,10 @@ public class PercolationStats {
                int j = StdRandom.uniform(1, n + 1);
                perc.open(r, j);
                //PercolationVisualizer.draw(perc, n);
-               //StdDraw.show();
+              // StdDraw.show();
            }  
            fractions[i] = (double)perc.numberOfOpenSites() / (n * n);
-           System.out.println(1 + " " + fractions[i]);
+           System.out.println(i + " " + fractions[i]);
            perc = new Percolation(n);
        }
    }
@@ -62,7 +62,7 @@ public class PercolationStats {
    public static void main(String[] args)        // test client (described below)
    {
        int n = 200; //Integer.parseInt(args[0]); 
-       int trials = 100; // Integer.parseInt(args[1]);
+       int trials = 10; // Integer.parseInt(args[1]);
        PercolationStats stats = new PercolationStats(n, trials);
                       
        System.out.println("mean                    = " + stats.mean());
