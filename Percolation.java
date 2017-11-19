@@ -4,8 +4,7 @@
  * @author Mykola
  * @version (a version number or a date)
  */
-//import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-import java.util.Random;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation
 {
@@ -24,7 +23,7 @@ public class Percolation
        throw new IllegalArgumentException("Side of grid must be bigger than 0"); 
        side = n;
        size = n * n;
-       id = new WeightedQuickUnionUF(size);
+      id = new WeightedQuickUnionUF(size);
        cond = new char[n][n];
        for(int i = 0; i < n; i++)
        {
@@ -33,12 +32,12 @@ public class Percolation
                cond[i][j] = 'c';
            }
        } 
-       
    }
   
    private int xyTo1D(int row, int col) // convert 2D to 1D
    {
-       return (row - 1) * side + (col - 1);
+       int d = (row - 1) * side + (col - 1);
+       return d;
    }
    
    private boolean validate(int row, int col) // check invalid indicies
@@ -57,31 +56,27 @@ public class Percolation
        {
            int q = xyTo1D(row, Math.max(1, col - 1));
            id.union(p, q);
-           //System.out.println(p + " and " + q + " connected with left neighbour");
-        }
+       }
        if(isOpen(Math.max(1, row - 1), col)) //above neighbour
        {
            int q = xyTo1D(Math.max(1, row - 1), col);
            id.union(p, q);
-          // System.out.println(p + " and " + q + " connected with above neighbour");
-       }
+       } 
        if(isOpen(row, Math.min(side, col + 1)))  // right neighbour
        {
            int q = xyTo1D(row, Math.min(side, col + 1));
            id.union(p, q);
-          // System.out.println(p + " and " + q + " connected with right neighbour");
        }
        if(isOpen(Math.min(side, row + 1), col))  // below neighbour
        {
            int q = xyTo1D(Math.min(side, row + 1), col);
            id.union(p, q);
-           //System.out.println(p + " and " + q + " connected with below neighbour");
        }
    }
+   
    public void open(int row, int col) // open site (row, col) if it is not open already
    {
        validate(row, col);
-       int p = xyTo1D(row, col);
        if(!(isOpen(row, col)))
        {
            cond[row - 1][col - 1] = 'o';
@@ -89,6 +84,7 @@ public class Percolation
            openNumber++;
        }    
    }
+   
    public boolean isOpen(int row, int col)  // is site (row, col) open?
    {
        validate(row, col);
@@ -96,6 +92,7 @@ public class Percolation
        return false;
        return true;
    }
+   
    public boolean isFull(int row, int col)  // is site (row, col) full?
    {
        validate(row, col);
@@ -104,17 +101,17 @@ public class Percolation
        {
            if(id.connected(i, p) && isOpen(1, i + 1))
            {
-               //System.out.println(row + " " + col + " is full");
                return true;
            }   
        }
-       //System.out.println(row + " " + col + "isn't full");
        return false;
    }
+   
    public int numberOfOpenSites()  // number of open sites
    {
        return openNumber;    
    }
+   
    public boolean percolates()         // does the system percolate?
    {
        for(int i = 1; i <= side; i++)
@@ -126,20 +123,19 @@ public class Percolation
    }
    
    
-   public static void main(String[] args)
+  /* public static void main(String[] args)
    {
       int n = 200;         // n-by-n percolation system
       float sum = 0;
       int count = 0;
        Random g = new Random(); 
-        // repeatedly read in sites to open and draw resulting system
+       // repeatedly read in sites to open and draw resulting system
       Percolation perc;
-      for(int i = 0; i < 100; i++)
+      for(int i = 0; i < 10; i++)
       {
        perc = new Percolation(n);
       while (!perc.percolates())
       {
-          
            int r = g.nextInt(n) + 1;
            int j = g.nextInt(n) + 1;
            perc.open(r, j);
@@ -148,7 +144,7 @@ public class Percolation
       sum+= (float)perc.numberOfOpenSites() / (n * n);
       count++;
     }
-    System.out.println("mean = " + (float)sum / count);
+    System.out.println("mean = " + sum / count); 
        
    } // test client (optional)
 
